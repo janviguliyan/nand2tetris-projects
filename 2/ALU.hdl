@@ -41,5 +41,46 @@ CHIP ALU {
         ng;      // if (out < 0)  equals 1, else 0
 
     PARTS:
-    //// Replace this comment with your code.
+    //a
+    //b
+    //  sel
+    // sel*a*b + !sel*a*b
+    // sel0*sel1*a*b*c*d + sel0*!sel1*a*b*c*d + !sel0*sel1*a*b*c*d + !sel0*!sel1*a*b*c*d 
+    // 0000000000010001
+
+    // implementing zx
+    Mux16(a=x, b=false, sel=zx, out=out1);
+
+    // implementing nx
+    Not16(in=out1, out=out1Not);
+    Mux16(a=out1, b=out1Not, sel=nx, out=out2);
+
+    // implementing zy
+    Mux16(a=y, b=false, sel=zy, out=out3);
+
+    // implementing ny
+    Not16(in=out3, out=out3Not);
+    Mux16(a=out3, b=out3Not, sel=ny, out=out4);
+
+    // implementing f
+    And16(a=out2, b=out4, out=and24);
+    Add16(a=out2, b=out4, out=add24);
+    Mux16(a=and24, b=add24, sel=f, out=out5);
+    // HalfAdder16(a=out2, b=out4, sum=sum24, carry=carry);
+    
+    // implementing out
+    Not16(in=out5, out=out5Not);
+    Mux16(a=out5, b=out5Not, sel=no, out[0..7]=outSplit1, out[8..14]=outSplit2, out[15]=outSplit3);
+
+    // splitting because we need to zr and ng as 1 bit and thus need to convert 16 bit input to 1 bit output
+    // b true--> 1 in expression (sel*a*b + !sel*a*b --> 0*a*1(becomes 0) + 1*a*1(out))
+    // is sel is true-->1 then b will be out thus sel is false for a to be out 
+    Mux16(a[0..7]=outSplit1, a[8..14]=outSplit2, a[15]=outSplit3, b=true, sel=false, out=out); 
+    Or8Way(in=outSplit1, out=outOr);
+    Or8Way(in[0..6]=outSplit2, in[7]=outSplit3, out=outOr2);
+    Or(a=outOr, b=outOr2, out=outOr3);
+    Not(in=outOr3, out=zr);
+    // ng
+    Or(a=outSplit3, b=false, out=ng);
+    // Replace this comment with your code.
 }

@@ -74,8 +74,11 @@ CHIP ALU {
 
     // splitting because we need to zr and ng as 1 bit and thus need to convert 16 bit input to 1 bit output
     // b true--> 1 in expression (sel*a*b + !sel*a*b --> 0*a*1(becomes 0) + 1*a*1(out))
+    //UPDATE:
+    // b can be true or false doesn't matter as 
+    // MUX Boolean expression is: sel*a + !sel*b
     // is sel is true-->1 then b will be out thus sel is false for a to be out 
-    Mux16(a[0..7]=outSplit1, a[8..14]=outSplit2, a[15]=outSplit3, b=true, sel=false, out=out); 
+    Mux16(a[0..7]=outSplit1, a[8..14]=outSplit2, a[15]=outSplit3, b=false, sel=false, out=out); 
     Or8Way(in=outSplit1, out=outOr);
     Or8Way(in[0..6]=outSplit2, in[7]=outSplit3, out=outOr2);
     Or(a=outOr, b=outOr2, out=outOr3);

@@ -13,5 +13,37 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
+
+    // 8 reg in RAM8
+    Register(in=in, load=load000, out=out000);
+    Register(in=in, load=load001, out=out001);
+    Register(in=in, load=load010, out=out010);
+    Register(in=in, load=load011, out=out011);
+    Register(in=in, load=load100, out=out100);
+    Register(in=in, load=load101, out=out101);
+    Register(in=in, load=load110, out=out110);
+    Register(in=in, load=load111, out=out111);
+
+    // DMUX8Way --> have 8 reg for, selecting which reg gets load for an address
+    DMux8Way(in=load, sel=address, a=load000, b=load001, c=load010, d=load011, e=load100, f=load101, g=load110, h=load111);
+    
+    // MUX8Way16 8 reg with width 16 bits for selecting output for an address
+    Mux8Way16(a=out000, b=out001, c=out010, d=out011, e=out100, f=out101, g=out110, h=out111, sel=address, out=out);
+
+    
+    
+    // Register(in=in[0], load=load, out=out[0]);
+    // Register(in=in[1], load=load, out=out[1]);
+    // Register(in=in[2], load=load, out=out[2]);
+    // Register(in=in[3], load=load, out=out[3]);
+    // Register(in=in[4], load=load, out=out[4]);
+    // Register(in=in[5], load=load, out=out[5]);
+    // Register(in=in[6], load=load, out=out[6]);
+    // Register(in=in[7], load=load, out=out[7]);
+
+    // Mux8Way16(a=in[0], b=in[1], c=in[2], d=in[3], e=in[4], f=in[5], g=in[6], h=in[7], sel=address, out=out);
+    
+
+    
     //// Replace this comment with your code.
 }

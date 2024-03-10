@@ -13,5 +13,22 @@ CHIP RAM512 {
     OUT out[16];
 
     PARTS:
+    // 8 RAM8 chips for RAM64, address[0..2]--> RAM8 taakes 3 bit address
+    // this address is used to select one of the registers within the selected RAM8 (LSB)
+    RAM64(in=in, load=load000, address=address[0..5], out=out000);
+    RAM64(in=in, load=load001, address=address[0..5], out=out001);
+    RAM64(in=in, load=load010, address=address[0..5], out=out010);
+    RAM64(in=in, load=load011, address=address[0..5], out=out011);
+    RAM64(in=in, load=load100, address=address[0..5], out=out100);
+    RAM64(in=in, load=load101, address=address[0..5], out=out101);
+    RAM64(in=in, load=load110, address=address[0..5], out=out110);
+    RAM64(in=in, load=load111, address=address[0..5], out=out111);
+
+    // address[3..5]--> used to select one of the RAM8 chips (MSB)
+    // DMUX8Way --> have 8 RAM8 for, selecting which RAM gets load for an address
+    DMux8Way(in=load, sel=address[6..8], a=load000, b=load001, c=load010, d=load011, e=load100, f=load101, g=load110, h=load111);
+    
+    // MUX8Way16 8 RAM8 with width 16 bits for selecting output for an address
+    Mux8Way16(a=out000, b=out001, c=out010, d=out011, e=out100, f=out101, g=out110, h=out111, sel=address[6..8], out=out);
     //// Replace this comment with your code.
 }
